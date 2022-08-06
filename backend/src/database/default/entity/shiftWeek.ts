@@ -26,8 +26,9 @@ export default class Week extends BaseTimestamp {
 
   @Column({
     type: "bool",
+    default: false,
   })
-  isPublish: boolean;
+  isPublished: boolean;
 
   @OneToMany(() => Shift, (shift) => shift.week)
   shifts: Shift[];

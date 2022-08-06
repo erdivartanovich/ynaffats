@@ -36,6 +36,11 @@ export const findById = async (
   return data;
 };
 
+export const query = async (query: string, params: any[]) => {
+  const repository = getRepository(Shift);
+  return repository.query(query, params);
+};
+
 export const findOne = async (
   where?: FindConditions<Shift>,
   opts?: FindOneOptions<Shift>
