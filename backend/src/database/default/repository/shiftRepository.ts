@@ -8,13 +8,15 @@ import {
 import moduleLogger from "../../../shared/functions/logger";
 import Shift from "../entity/shift";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
+import { queryFilterMapper } from "../../../shared/functions/queryFilterMapper";
 
 const logger = moduleLogger("shiftRepository");
 
 export const find = async (opts?: FindManyOptions<Shift>): Promise<Shift[]> => {
-  logger.info("Find");
+  const { order, where } = queryFilterMapper(opts);
   const repository = getRepository(Shift);
-  const data = await repository.find(opts);
+  logger.info("Find");
+  const data = await repository.find({ where, order });
   return data;
 };
 
