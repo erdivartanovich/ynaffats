@@ -1,20 +1,26 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Fab,
+  Grid,
+  IconButton,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { getErrorMessage } from "../helper/error/index";
-import { deleteShiftById, getShifts } from "../helper/api/shift";
-import DataTable from "react-data-table-component";
-import IconButton from "@material-ui/core/IconButton";
+import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import Fab from "@material-ui/core/Fab";
-import AddIcon from "@material-ui/icons/Add";
-import { useHistory } from "react-router-dom";
-import ConfirmDialog from "../components/ConfirmDialog";
 import Alert from "@material-ui/lab/Alert";
-import { Link as RouterLink } from "react-router-dom";
+import React, { FunctionComponent, useEffect, useState } from "react";
+import DataTable from "react-data-table-component";
+import { Link as RouterLink, useHistory } from "react-router-dom";
+import ConfirmDialog from "../components/ConfirmDialog";
+import WeekPicker, { Week } from "../components/WeekPicker";
+import { deleteShiftById, getShifts } from "../helper/api/shift";
+import { getErrorMessage } from "../helper/error/index";
+import { staffanyTheme as theme } from "../commons/theme";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,8 +30,8 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     bottom: 40,
     right: 40,
-    backgroundColor: 'white',
-    color: theme.color.turquoise
+    backgroundColor: "white",
+    color: theme.color.turquoise,
   },
 }));
 
@@ -62,6 +68,7 @@ const Shift = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
+  const [selectedWeek, setSelectedWeek] = useState<Week>();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
@@ -90,7 +97,6 @@ const Shift = () => {
         setIsLoading(false);
       }
     };
-
     getData();
   }, []);
 
@@ -153,6 +159,39 @@ const Shift = () => {
     <Grid container spacing={3}>
       <Grid item xs={12}>
         <Card className={classes.root}>
+          <CardHeader
+            avatar={
+              <WeekPicker
+                onSelectedChange={(week) => {
+                  console.log("week change", week);
+                  setSelectedWeek(week);
+                }}
+              />
+            }
+            action={
+              <Box>
+                <Button
+                  variant="outlined"
+                  style={{
+                    marginRight: 10,
+                    color: theme.palette.success.main,
+                    borderColor: theme.palette.success.main,
+                  }}
+                >
+                  Add
+                </Button>
+                <Button
+                  variant="contained"
+                  style={{
+                    color: "white",
+                    backgroundColor: theme.palette.success.main,
+                  }}
+                >
+                  Publish
+                </Button>
+              </Box>
+            }
+          />
           <CardContent>
             {errMsg.length > 0 ? (
               <Alert severity="error">{errMsg}</Alert>
