@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -21,11 +22,13 @@ export default class Shift extends BaseTimestamp {
   })
   date: string;
 
+  @Index()
   @Column({
     type: "time",
   })
   startTime: string;
 
+  @Index()
   @Column({
     type: "time",
   })

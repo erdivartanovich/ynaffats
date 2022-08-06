@@ -61,7 +61,7 @@ export const validateShift = async (
   console.log("NEW SHIFT", shift.startTime, shift.endTime);
   const overlappingShift = await shiftRepository.query(
     `
-    select id from shift
+    select count(id) from shift
     where not (
       ($1 = "startTime" and $2 = "endTime")
       or ($1 >= "endTime")
@@ -70,11 +70,10 @@ export const validateShift = async (
     [shift.startTime, shift.endTime]
   );
 
-  if (!!overlappingShift.length) {
+  if (overlappingShift[0].count > 0) {
     valid = false;
     validateMessage = "Overlapping shift exists!";
   }
-  console.log(valid);
   return {
     valid,
     validateMessage: validateMessage,
