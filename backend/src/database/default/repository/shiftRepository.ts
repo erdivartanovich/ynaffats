@@ -4,6 +4,8 @@ import {
   FindOneOptions,
   FindConditions,
   DeleteResult,
+  ObjectID,
+  Between,
 } from "typeorm";
 import moduleLogger from "../../../shared/functions/logger";
 import Shift from "../entity/shift";
@@ -16,7 +18,11 @@ export const find = async (opts?: FindManyOptions<Shift>): Promise<Shift[]> => {
   const { order, where } = queryFilterMapper(opts);
   const repository = getRepository(Shift);
   logger.info("Find");
-  const data = await repository.find({ where, order });
+  const data = await repository.find({
+    where,
+    order,
+    relations: ["week"],
+  });
   return data;
 };
 
