@@ -84,21 +84,26 @@ const Shift = () => {
   };
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        setIsLoading(true);
-        setErrMsg("");
-        const { results } = await getShifts();
-        setRows(results);
-      } catch (error) {
-        const message = getErrorMessage(error);
-        setErrMsg(message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    getData();
-  }, []);
+    if (selectedWeek) {
+      const getData = async () => {
+        try {
+          setIsLoading(true);
+          setErrMsg("");
+          const { results } = await getShifts(
+            selectedWeek.startOfWeek,
+            selectedWeek.endOfWeek
+          );
+          setRows(results);
+        } catch (error) {
+          const message = getErrorMessage(error);
+          setErrMsg(message);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      getData();
+    }
+  }, [selectedWeek]);
 
   const columns = [
     {
@@ -183,9 +188,14 @@ const Shift = () => {
                 <Button
                   variant="contained"
                   style={{
-                    color: "white",
-                    backgroundColor: theme.palette.success.main,
+                    color: rows.length
+                      ? theme.palette.secondary.contrastText
+                      : theme.color.turquoise,
+                    backgroundColor: rows.length
+                      ? theme.palette.success.main
+                      : "silver",
                   }}
+                  disabled={!rows.length}
                 >
                   Publish
                 </Button>
