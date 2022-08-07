@@ -20,7 +20,7 @@ export const findById = async (
 export const create = async (payload: ICreateShift): Promise<Shift> => {
   const week = await weekRepository.findOrCreate(new Date(payload.date));
   console.log(week);
-  const weekValid = validateWeek(week);
+  const weekValid = await validateWeek(week);
   if (!weekValid.valid) {
     throw new Error(weekValid.validateMessage);
   }
@@ -41,6 +41,10 @@ export const updateById = async (
   id: string,
   payload: IUpdateShift
 ): Promise<Shift> => {
+  const weekValid = await validateWeek(payload.weekId);
+  if (!weekValid.valid) {
+    throw new Error(weekValid.validateMessage);
+  }
   const shiftValid = await validateShift(payload);
   if (!shiftValid.valid) throw new Error(shiftValid.validateMessage);
   return shiftRepository.updateById(id, {
@@ -49,6 +53,11 @@ export const updateById = async (
 };
 
 export const deleteById = async (id: string | string[]) => {
+  const shift = await shiftRepository.findById(id as string);
+  const weekValid = await validateWeek(shift.week);
+  if (!weekValid.valid) {
+    throw new Error(weekValid.validateMessage);
+  }
   return shiftRepository.deleteById(id);
 };
 
@@ -80,12 +89,19 @@ export const validateShift = async (
   };
 };
 
-export const validateWeek = (week: Week): IValidateResult => {
+export const validateWeek = async (
+  week: Week | string
+): Promise<IValidateResult> => {
   let valid = true;
   let validateMessage = "";
-  if (week.isPublished) {
+  let theWeek: Week;
+  theWeek =
+    typeof week === "string"
+      ? await weekRepository.findById(week as string)
+      : week;
+  if (theWeek.isPublished) {
     valid = false;
-    validateMessage = "Shift week already published!";
+    validateMessage = "Cannot create/update/delete shift in published week!";
   }
   return {
     valid,
@@ -93,8 +109,8 @@ export const validateWeek = (week: Week): IValidateResult => {
   };
 };
 
-export const publish = (weekId: string) => {
+export const publishOrUnpublish = (weekId: string, isPublish: boolean) => {
   return weekRepository.updateById(weekId, {
-    isPublished: true,
+    isPublished: isPublish,
   });
 };

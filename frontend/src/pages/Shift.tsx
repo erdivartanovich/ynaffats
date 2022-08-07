@@ -18,9 +18,14 @@ import DataTable from "react-data-table-component";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import ConfirmDialog from "../components/ConfirmDialog";
 import WeekPicker, { Week } from "../components/WeekPicker";
-import { deleteShiftById, getShifts } from "../helper/api/shift";
+import {
+  deleteShiftById,
+  getShifts,
+  publishOrUnpublish as publishOrUnpublishApi,
+} from "../helper/api/shift";
 import { getErrorMessage } from "../helper/error/index";
 import { staffanyTheme as theme } from "../commons/theme";
+import { IShift } from "../commons/types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -64,11 +69,12 @@ const Shift = () => {
   const classes = useStyles();
   const history = useHistory();
 
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState<IShift[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
   const [selectedWeek, setSelectedWeek] = useState<Week>();
+  const [week, setWeek] = useState<{ id: string; isPublished: boolean }>();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
@@ -83,6 +89,19 @@ const Shift = () => {
     setShowDeleteConfirm(false);
   };
 
+  const publishOrUnpublish = async (id: string, action: string) => {
+    try {
+      setIsLoading(true);
+      setErrMsg("");
+      const { results } = await publishOrUnpublishApi(id, action);
+      setWeek(results);
+    } catch (error) {
+      const message = getErrorMessage(error);
+      setErrMsg(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
     if (selectedWeek) {
       const getData = async () => {
@@ -104,6 +123,12 @@ const Shift = () => {
       getData();
     }
   }, [selectedWeek]);
+
+  useEffect(() => {
+    if (rows?.length) {
+      setWeek(rows[0].week);
+    }
+  }, [rows]);
 
   const columns = [
     {
@@ -176,12 +201,14 @@ const Shift = () => {
             action={
               <Box>
                 <Button
+                  component={RouterLink}
                   variant="outlined"
                   style={{
                     marginRight: 10,
                     color: theme.palette.success.main,
                     borderColor: theme.palette.success.main,
                   }}
+                  to={`/shift/add`}
                 >
                   Add
                 </Button>
@@ -196,8 +223,15 @@ const Shift = () => {
                       : "silver",
                   }}
                   disabled={!rows.length}
+                  onClick={() => {
+                    if (week) {
+                      week.isPublished
+                        ? publishOrUnpublish(week.id, "unpublish")
+                        : publishOrUnpublish(week.id, "publish");
+                    }
+                  }}
                 >
-                  Publish
+                  {week?.isPublished ? "Unpublish" : "Publish"}
                 </Button>
               </Box>
             }

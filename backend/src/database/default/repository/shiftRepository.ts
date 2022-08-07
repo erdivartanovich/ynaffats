@@ -32,7 +32,7 @@ export const findById = async (
 ): Promise<Shift> => {
   logger.info("Find by id");
   const repository = getRepository(Shift);
-  const data = await repository.findOne(id, opts);
+  const data = await repository.findOne(id, { relations: ["week"], ...opts });
   return data;
 };
 

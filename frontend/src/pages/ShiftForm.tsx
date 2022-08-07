@@ -159,6 +159,7 @@ const ShiftForm = () => {
         date: formattedDate,
         startTime: formattedStartTime,
         endTime: formattedEndTime,
+        weekId: currentData?.weekId,
       };
 
       if (id) {

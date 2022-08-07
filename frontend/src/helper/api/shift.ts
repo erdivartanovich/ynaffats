@@ -1,7 +1,11 @@
 import { format } from "date-fns";
 import { getAxiosInstance } from ".";
+import { IShift } from "../../commons/types";
 
-export const getShifts = async (fromDate: Date, toDate: Date) => {
+export const getShifts = async (
+  fromDate: Date,
+  toDate: Date
+): Promise<{ results: IShift[] }> => {
   const api = getAxiosInstance();
   const from = format(fromDate, "yyyy-MM-dd");
   const to = format(toDate, "yyyy-MM-dd");
@@ -32,5 +36,11 @@ export const updateShiftById = async (id: string, payload: any) => {
 export const deleteShiftById = async (id: string) => {
   const api = getAxiosInstance();
   const { data } = await api.delete(`/shifts/${id}`);
+  return data;
+};
+
+export const publishOrUnpublish = async (id: string, action: string) => {
+  const api = getAxiosInstance();
+  const { data } = await api.patch(`/shifts/${action}/week/${id}`);
   return data;
 };

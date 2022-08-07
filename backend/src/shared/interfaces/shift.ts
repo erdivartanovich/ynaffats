@@ -10,5 +10,10 @@ export interface IUpdateShift {
   date?: string;
   startTime?: string;
   endTime?: string;
-  weekId? : string;
+  weekId?: string;
+}
+
+export enum PUBLISH_STATE {
+  PUBLISH = "publish",
+  UNPUBLISH = "unpublish",
 }

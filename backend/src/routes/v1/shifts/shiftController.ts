@@ -5,6 +5,7 @@ import {
   ICreateShift,
   ISuccessResponse,
   IUpdateShift,
+  PUBLISH_STATE,
 } from "../../../shared/interfaces";
 import moduleLogger from "../../../shared/functions/logger";
 
@@ -97,13 +98,18 @@ export const deleteById = async (req: Request, h: ResponseToolkit) => {
   }
 };
 
-export const publish = async (req: Request, h: ResponseToolkit) => {
+export const publishOrUnpublish = async (req: Request, h: ResponseToolkit) => {
   try {
-    const { id: weekId } = req.params;
-    const data = await shiftUsecase.publish(weekId);
+    const { id: weekId, action } = req.params;
+    const data = await shiftUsecase.publishOrUnpublish(
+      weekId,
+      action === PUBLISH_STATE.PUBLISH
+    );
+    const actionName =
+      action === PUBLISH_STATE.PUBLISH ? "Publish" : "Unpublish";
     const res: ISuccessResponse = {
       statusCode: 200,
-      message: "Publish shift week successful",
+      message: `${actionName} shift week successful`,
       results: data,
     };
     return res;

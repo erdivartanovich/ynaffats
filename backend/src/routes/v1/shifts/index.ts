@@ -5,6 +5,7 @@ import {
   filterSchema,
   idDto,
   updateShiftDto,
+  publishDto,
 } from "../../../shared/dtos";
 
 export default function (server: Server, basePath: string) {
@@ -78,14 +79,14 @@ export default function (server: Server, basePath: string) {
 
   server.route({
     method: "PATCH",
-    path: basePath + "/week/{id}/publish",
-    handler: shiftController.publish,
+    path: basePath + "/{action}/week/{id}",
+    handler: shiftController.publishOrUnpublish,
     options: {
       description: "Publish week of shift",
       notes: "Publish week of shift",
       tags: ["api", "shift"],
       validate: {
-        params: idDto,
+        params: publishDto,
       },
     },
   });

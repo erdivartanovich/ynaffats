@@ -22,5 +22,11 @@ export const findOrCreate = async (date: Date): Promise<Week> => {
 export const updateById = async (id: string, payload: Partial<Week>) => {
   console.log("UPDATE WEEK", id);
   const weekRepository = getRepository(Week);
-  return await weekRepository.update(id, payload);
+  await weekRepository.update(id, payload);
+  return await weekRepository.findOne(id);
+};
+
+export const findById = async (id: string) => {
+  const weekRepository = getRepository(Week);
+  return await weekRepository.findOne(id);
 };
