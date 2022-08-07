@@ -92,3 +92,9 @@ export const validateWeek = (week: Week): IValidateResult => {
     validateMessage,
   };
 };
+
+export const publish = (weekId: string) => {
+  return weekRepository.updateById(weekId, {
+    isPublished: true,
+  });
+};

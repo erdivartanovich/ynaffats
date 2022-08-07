@@ -22,7 +22,7 @@ export const find = async (req: Request, h: ResponseToolkit) => {
     };
     return res;
   } catch (error) {
-    logger.error(error.message)
+    logger.error(error.message);
     return errorHandler(h, error);
   }
 };
@@ -39,7 +39,7 @@ export const findById = async (req: Request, h: ResponseToolkit) => {
     };
     return res;
   } catch (error) {
-    logger.error(error.message)
+    logger.error(error.message);
     return errorHandler(h, error);
   }
 };
@@ -56,7 +56,7 @@ export const create = async (req: Request, h: ResponseToolkit) => {
     };
     return res;
   } catch (error) {
-    logger.error(error.message)
+    logger.error(error.message);
     return errorHandler(h, error);
   }
 };
@@ -75,7 +75,7 @@ export const updateById = async (req: Request, h: ResponseToolkit) => {
     };
     return res;
   } catch (error) {
-    logger.error(error.message)
+    logger.error(error.message);
     return errorHandler(h, error);
   }
 };
@@ -92,7 +92,23 @@ export const deleteById = async (req: Request, h: ResponseToolkit) => {
     };
     return res;
   } catch (error) {
-    logger.error(error.message)
+    logger.error(error.message);
+    return errorHandler(h, error);
+  }
+};
+
+export const publish = async (req: Request, h: ResponseToolkit) => {
+  try {
+    const { id: weekId } = req.params;
+    const data = await shiftUsecase.publish(weekId);
+    const res: ISuccessResponse = {
+      statusCode: 200,
+      message: "Publish shift week successful",
+      results: data,
+    };
+    return res;
+  } catch (error) {
+    logger.error(error.message);
     return errorHandler(h, error);
   }
 };
